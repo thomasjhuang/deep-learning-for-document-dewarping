@@ -1,0 +1,4 @@
+# To install these Python dependencies, please type:
+# pip install -r requirements.txt
+
+streamlit
