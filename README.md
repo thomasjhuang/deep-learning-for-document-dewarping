@@ -3,5 +3,4 @@
 
 ## Info
 This project is in the early stages of development. The objective is to dewarp images of documents which may have folds or perturbations
-by using pix2pixHD. 
-
+by using pix2pixHD.
