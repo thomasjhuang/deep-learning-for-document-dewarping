@@ -1,42 +1,90 @@
 # Docuwarp
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/7acd5aa8048a4c96bd97a96bac2639d1)](https://app.codacy.com/app/huang836/deep-learning-for-document-dewarping?utm_source=github.com&utm_medium=referral&utm_content=thomasjhuang/deep-learning-for-document-dewarping&utm_campaign=Badge_Grade_Dashboard)
-This project is focused on dewarping document images through the usage of pix2pixHD. The objective is to take images of documents that are warped, folded, crumpled, etc. and convert the image to  use the official pix2pixHD repository to train and perform inference. 
 
-### Install
+This project is focused on dewarping document images through the usage of pix2pixHD. The objective is to take images of documents that are warped, folded, crumpled, etc. and convert the image to  use the [official pix2pixHD repository](https://github.com/NVIDIA/pix2pixHD) to train and perform inference. 
+
+### Prerequisites
 
 This project requires **Python** and the following Python libraries installed:
 
-- [NumPy](http://www.numpy.org/)
-- [Pandas](http://pandas.pydata.org/)
-- [matplotlib](http://matplotlib.org/)
+- Linux or OSX
 - [scikit-learn](http://scikit-learn.org/stable/)
+- NVIDIA GPU (11G memory or larger) + CUDA cuDNN
+- [Pytorch](https://pytorch.org/get-started/locally/)
+- [Pillow](https://pillow.readthedocs.io/en/stable/installation.html)
+- [OpenCV](https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_setup/py_table_of_contents_setup/py_table_of_contents_setup.html)
+- [Apex](https://github.com/NVIDIA/apex) Only if you want to use `--fp16` for mixed precision training
 
-You will also need to have software installed to run and execute a [Jupyter Notebook](http://ipython.org/notebook.html)
-
-If you do not have Python installed yet, it is highly recommended that you install the [Anaconda](http://continuum.io/downloads) distribution of Python, which already has the above packages and more included. 
-
-### Code
-
-Template code is provided in the `boston_housing.ipynb` notebook file. You will also be required to use the included `visuals.py` Python file and the `housing.csv` dataset file to complete your work. While some code has already been implemented to get you started, you will need to implement additional functionality when requested to successfully complete the project. Note that the code included in `visuals.py` is meant to be used out-of-the-box and not intended for students to manipulate. If you are interested in how the visualizations are created in the notebook, please feel free to explore this Python file.
+## Getting Started
+### Installation
+- Install PyTorch and dependencies from http://pytorch.org
+- Install python libraries [dominate](https://github.com/Knio/dominate).
+```bash
+pip install dominate
+```
+- Clone this repo:
+```bash
+git clone https://github.com/thomasjhuang/deep-learning-for-document-dewarping
+cd deep-learning-for-document-dewarping
+```
 
 ### Training
-
-In a terminal or command window, navigate to the top-level project directory (that contains this README) and run one of the following commands:
-
+- Train the kaggle model with 256x256 crops (`bash ./scripts/train_kaggle_256.sh`):
 ```bash
-python train.py --name proj_name --dataroot ./datasets/proj_name/ --label_nc 0 --resize_or_crop crop --no_instance --no_flip
-```  
+#!./scripts/train_kaggle_256.sh
+python train.py --name kaggle
+```
+- To view training results, please checkout intermediate results in `./checkpoints/kaggle/web/index.html`.
+If you have tensorflow installed, you can see tensorboard logs in `./checkpoints/kaggle/logs` by adding `--tf_log` to the training scripts.
 
-Use flag --fp16 if you have NVIDIA Apex installed, and wish to use Automatic Mixed Precision, this improves training speed by up to 80% at best.
 
-### Data
+### Testing
+- A few example warped test images are included in the `datasets` folder.
+- Please download the pre-trained kaggle model from [here](https://drive.google.com/file/d/1h9SykUnuZul7J3Nbms2QGH1wa85nbN2-/view?usp=sharing) (google drive link), and put it under `./checkpoints/label2city_1024p/`
+- Test the model (`bash ./scripts/test_1024p.sh`):
+```bash
+#!./scripts/test_1024p.sh
+python test.py --name label2city_1024p --netG local --ngf 32 --resize_or_crop none
+```
+The test results will be saved to a html file here: `./results/label2city_1024p/test_latest/index.html`.
 
-The modified Boston housing dataset consists of 489 data points, with each datapoint having 3 features. This dataset is a modified version of the Boston Housing dataset found on the [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/datasets/Housing).
+More example scripts can be found in the `scripts` directory.
 
-**Features**
-1.  `RM`: average number of rooms per dwelling
-2. `LSTAT`: percentage of population considered lower status
-3. `PTRATIO`: pupil-teacher ratio by town
 
-**Target Variable**
-4. `MEDV`: median value of owner-occupied homes
+### Dataset
+- We use the kaggle denoising dirty documents dataset. To train a model on the full dataset, please download it from the [official website](https://www.kaggle.com/c/denoising-dirty-documents/data).
+After downloading, please put it under the `datasets` folder in the same way the example images are provided.
+
+
+### Multi-GPU training
+- Train a model using multiple GPUs (`bash ./scripts/train_kaggle_256_multigpu.sh`):
+```bash
+#!./scripts/train_kaggle_256_multigpu.sh
+python train.py --name label2city_512p --batchSize 32 --gpu_ids 0,1,2,3,4,5,6,7
+```
+
+### Training with Automatic Mixed Precision (AMP) for faster speed
+- To train with mixed precision support, please first install apex from: https://github.com/NVIDIA/apex
+- You can then train the model by adding `--fp16`. For example,
+```bash
+#!./scripts/train_512p_fp16.sh
+python -m torch.distributed.launch train.py --name label2city_512p --fp16
+```
+In our test case, it trains about 80% faster with AMP on a Volta machine.
+
+### Training at full resolution
+- To train the images at full resolution (2048 x 1024) requires a GPU with 24G memory (`bash ./scripts/train_1024p_24G.sh`), or 16G memory if using mixed precision (AMP).
+- If only GPUs with 12G memory are available, please use the 12G script (`bash ./scripts/train_1024p_12G.sh`), which will crop the images during training. Performance is not guaranteed using this script.
+
+### Training with your own dataset
+- If you want to train with your own dataset, please generate label maps which are one-channel whose pixel values correspond to the object labels (i.e. 0,1,...,N-1, where N is the number of labels). This is because we need to generate one-hot vectors from the label maps. Please also specity `--label_nc N` during both training and testing.
+- If your input is not a label map, please just specify `--label_nc 0` which will directly use the RGB colors as input. The folders should then be named `train_A`, `train_B` instead of `train_label`, `train_img`, where the goal is to translate images from A to B.
+- If you don't have instance maps or don't want to use them, please specify `--no_instance`.
+- The default setting for preprocessing is `scale_width`, which will scale the width of all training images to `opt.loadSize` (1024) while keeping the aspect ratio. If you want a different setting, please change it by using the `--resize_or_crop` option. For example, `scale_width_and_crop` first resizes the image to have width `opt.loadSize` and then does random cropping of size `(opt.fineSize, opt.fineSize)`. `crop` skips the resizing step and only performs random cropping. If you don't want any preprocessing, please specify `none`, which will do nothing other than making sure the image is divisible by 32.
+
+## More Training/Test Details
+- Flags: see `options/train_options.py` and `options/base_options.py` for all the training flags; see `options/test_options.py` and `options/base_options.py` for all the test flags.
+- Instance map: we take in both label maps and instance maps as input. If you don't want to use instance maps, please specify the flag `--no_instance`.
+
+## Acknowledgments
+This code borrows heavily from [pytorch-CycleGAN-and-pix2pix](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix).
