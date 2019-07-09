@@ -1,5 +1,10 @@
 **/data
 **/checkpoints
+**/datasets
+**/apex
+**/results
+**/raw_data
+**/imgs
 *.pyc
 *.prototxt
 *.tex
