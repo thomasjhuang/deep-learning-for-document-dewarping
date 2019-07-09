@@ -1,5 +1,6 @@
 # Docuwarp
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/7acd5aa8048a4c96bd97a96bac2639d1)](https://app.codacy.com/app/huang836/deep-learning-for-document-dewarping?utm_source=github.com&utm_medium=referral&utm_content=thomasjhuang/deep-learning-for-document-dewarping&utm_campaign=Badge_Grade_Dashboard)
+![Python version](https://img.shields.io/pypi/pyversions/dominate.svg?style=flat)
 
 This project is focused on dewarping document images through the usage of pix2pixHD. The objective is to take images of documents that are warped, folded, crumpled, etc. and convert the image to  use the [official pix2pixHD repository](https://github.com/NVIDIA/pix2pixHD) to train and perform inference. 
 
@@ -32,7 +33,7 @@ cd deep-learning-for-document-dewarping
 - Train the kaggle model with 256x256 crops (`bash ./scripts/train_kaggle_256.sh`):
 ```bash
 #!./scripts/train_kaggle_256.sh
-python train.py --name kaggle
+python train.py --name kaggle --label_nc 0 --no_instance --no_flip --netG local --ngf 32 --fineSize 256
 ```
 - To view training results, please checkout intermediate results in `./checkpoints/kaggle/web/index.html`.
 If you have tensorflow installed, you can see tensorboard logs in `./checkpoints/kaggle/logs` by adding `--tf_log` to the training scripts.
@@ -40,27 +41,34 @@ If you have tensorflow installed, you can see tensorboard logs in `./checkpoints
 
 ### Testing
 - A few example warped test images are included in the `datasets` folder.
-- Please download the pre-trained kaggle model from [here](https://drive.google.com/file/d/1h9SykUnuZul7J3Nbms2QGH1wa85nbN2-/view?usp=sharing) (google drive link), and put it under `./checkpoints/label2city_1024p/`
-- Test the model (`bash ./scripts/test_1024p.sh`):
+- Please download the pre-trained kaggle model from [here](https://drive.google.com/file/d/1h9SykUnuZul7J3Nbms2QGH1wa85nbN2-/view?usp=sharing) (google drive link), and put it under `./checkpoints/kaggle_256/`
+- Test the model (`bash ./scripts/test_kaggle_256.sh`):
 ```bash
-#!./scripts/test_1024p.sh
-python test.py --name label2city_1024p --netG local --ngf 32 --resize_or_crop none
+#!./scripts/test_kaggle_256.sh
+python test.py --name kaggle --label_nc 0 --netG local --ngf 32 --resize_or_crop crop --no_instance --no_flip --fineSize 256
 ```
-The test results will be saved to a html file here: `./results/label2city_1024p/test_latest/index.html`.
+The test results will be saved to a html file here: `./results/kaggle/test_latest/index.html`.
 
 More example scripts can be found in the `scripts` directory.
 
 
 ### Dataset
 - We use the kaggle denoising dirty documents dataset. To train a model on the full dataset, please download it from the [official website](https://www.kaggle.com/c/denoising-dirty-documents/data).
-After downloading, please put it under the `datasets` folder in the same way the example images are provided.
+After downloading, please put it under the `datasets` folder with warped images under the directory name `train_A` and unwarped images under the directory `train_B`. Your test images are warped images, and should be under the name `test_A`. Below is an example dataset directory structure.
+  .
+  ├── ...
+  ├── datasets                  
+  │   ├── train_A               # warped images
+  │   ├── train_B               # unwarped, "ground truth" images
+  │   └── test_A                # warped images used for testing
+  └── ...
 
 
 ### Multi-GPU training
 - Train a model using multiple GPUs (`bash ./scripts/train_kaggle_256_multigpu.sh`):
 ```bash
 #!./scripts/train_kaggle_256_multigpu.sh
-python train.py --name label2city_512p --batchSize 32 --gpu_ids 0,1,2,3,4,5,6,7
+python train.py --name kaggle_256_multigpu --label_nc 0 --batchSize 32 --gpu_ids 0,1,2,3,4,5,6,7
 ```
 
 ### Training with Automatic Mixed Precision (AMP) for faster speed
