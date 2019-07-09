@@ -43,10 +43,6 @@ If you have tensorflow installed, you can see tensorboard logs in `./checkpoints
 - If you don't have instance maps or don't want to use them, please specify `--no_instance`.
 - The default setting for preprocessing is `scale_width`, which will scale the width of all training images to `opt.loadSize` (1024) while keeping the aspect ratio. If you want a different setting, please change it by using the `--resize_or_crop` option. For example, `scale_width_and_crop` first resizes the image to have width `opt.loadSize` and then does random cropping of size `(opt.fineSize, opt.fineSize)`. `crop` skips the resizing step and only performs random cropping. If you don't want any preprocessing, please specify `none`, which will do nothing other than making sure the image is divisible by 32.
 
-## More Training/Test Details
-- Flags: see `options/train_options.py` and `options/base_options.py` for all the training flags; see `options/test_options.py` and `options/base_options.py` for all the test flags.
-- Instance map: we take in both label maps and instance maps as input. If you don't want to use instance maps, please specify the flag `--no_instance`.
-
 ### Testing
 - A few example warped test images are included in the `datasets` folder.
 - Please download the pre-trained kaggle model from [here](https://drive.google.com/file/d/1h9SykUnuZul7J3Nbms2QGH1wa85nbN2-/view?usp=sharing) (google drive link), and put it under `./checkpoints/kaggle_256/`
@@ -88,3 +84,8 @@ python train.py --name kaggle_256_multigpu --label_nc 0 --netG local --ngf 32 --
 python -m torch.distributed.launch train.py --name label2city_512p --fp16
 ```
 In my test case, it trains about 80% faster with AMP on a Volta machine.
+
+## More Training/Test Details
+- Flags: see `options/train_options.py` and `options/base_options.py` for all the training flags; see `options/test_options.py` and `options/base_options.py` for all the test flags.
+- Instance map: we take in both label maps and instance maps as input. If you don't want to use instance maps, please specify the flag `--no_instance`.
+
