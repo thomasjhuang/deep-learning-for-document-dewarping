@@ -55,13 +55,14 @@ More example scripts can be found in the `scripts` directory.
 ### Dataset
 - We use the kaggle denoising dirty documents dataset. To train a model on the full dataset, please download it from the [official website](https://www.kaggle.com/c/denoising-dirty-documents/data).
 After downloading, please put it under the `datasets` folder with warped images under the directory name `train_A` and unwarped images under the directory `train_B`. Your test images are warped images, and should be under the name `test_A`. Below is an example dataset directory structure.
-  .
-  ├── ...
-  ├── datasets                  
-  │   ├── train_A               # warped images
-  │   ├── train_B               # unwarped, "ground truth" images
-  │   └── test_A                # warped images used for testing
-  └── ...
+      
+      .
+      ├── ...
+      ├── datasets                  
+      │   ├── train_A               # warped images
+      │   ├── train_B               # unwarped, "ground truth" images
+      │   └── test_A                # warped images used for testing
+      └── ...
 
 
 ### Multi-GPU training
@@ -93,6 +94,3 @@ In our test case, it trains about 80% faster with AMP on a Volta machine.
 ## More Training/Test Details
 - Flags: see `options/train_options.py` and `options/base_options.py` for all the training flags; see `options/test_options.py` and `options/base_options.py` for all the test flags.
 - Instance map: we take in both label maps and instance maps as input. If you don't want to use instance maps, please specify the flag `--no_instance`.
-
-## Acknowledgments
-This code borrows heavily from [pytorch-CycleGAN-and-pix2pix](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix).
