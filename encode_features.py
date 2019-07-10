@@ -6,7 +6,7 @@ import os
 
 opt = TrainOptions().parse()
 opt.nThreads = 1
-opt.batchSize = 1 
+opt.batchSize = 1
 opt.serial_batches = True 
 opt.no_flip = True
 opt.instance_feat = True

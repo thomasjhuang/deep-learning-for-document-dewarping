@@ -4,7 +4,6 @@ import ntpath
 import time
 from . import util
 from . import html
-import scipy.misc
 from PIL import Image
 try:
     from StringIO import StringIO  # Python 2.7

@@ -79,35 +79,35 @@ class GANLoss(nn.Module):
         else:
             self.loss = nn.BCELoss()
 
-    def get_target_tensor(self, input, target_is_real):
+    def get_target_tensor(self, _input, target_is_real):
         target_tensor = None
         if target_is_real:
             create_label = ((self.real_label_var is None) or
-                            (self.real_label_var.numel() != input.numel()))
+                            (self.real_label_var.numel() != _input.numel()))
             if create_label:
-                real_tensor = self.Tensor(input.size()).fill_(self.real_label)
+                real_tensor = self.Tensor(_input.size()).fill_(self.real_label)
                 self.real_label_var = Variable(real_tensor, requires_grad=False)
             target_tensor = self.real_label_var
         else:
             create_label = ((self.fake_label_var is None) or
-                            (self.fake_label_var.numel() != input.numel()))
+                            (self.fake_label_var.numel() != _input.numel()))
             if create_label:
-                fake_tensor = self.Tensor(input.size()).fill_(self.fake_label)
+                fake_tensor = self.Tensor(_input.size()).fill_(self.fake_label)
                 self.fake_label_var = Variable(fake_tensor, requires_grad=False)
             target_tensor = self.fake_label_var
         return target_tensor
 
-    def __call__(self, input, target_is_real):
-        if isinstance(input[0], list):
+    def __call__(self, _input, target_is_real):
+        if isinstance(_input[0], list):
             loss = 0
-            for input_i in input:
+            for input_i in _input:
                 pred = input_i[-1]
                 target_tensor = self.get_target_tensor(pred, target_is_real)
                 loss += self.loss(pred, target_tensor)
             return loss
         else:            
-            target_tensor = self.get_target_tensor(input[-1], target_is_real)
-            return self.loss(input[-1], target_tensor)
+            target_tensor = self.get_target_tensor(_input[-1], target_is_real)
+            return self.loss(_input[-1], target_tensor)
 
 class VGGLoss(nn.Module):
     def __init__(self, gpu_ids):
@@ -164,9 +164,9 @@ class LocalEnhancer(nn.Module):
         
         self.downsample = nn.AvgPool2d(3, stride=2, padding=[1, 1], count_include_pad=False)
 
-    def forward(self, input): 
+    def forward(self, _input): 
         ### create input pyramid
-        input_downsampled = [input]
+        input_downsampled = [_input]
         for i in range(self.n_local_enhancers):
             input_downsampled.append(self.downsample(input_downsampled[-1]))
 
@@ -175,7 +175,7 @@ class LocalEnhancer(nn.Module):
         ### build up one layer at a time
         for n_local_enhancers in range(1, self.n_local_enhancers+1):
             model_downsample = getattr(self, 'model'+str(n_local_enhancers)+'_1')
-            model_upsample = getattr(self, 'model'+str(n_local_enhancers)+'_2')            
+            model_upsample = getattr(self, 'model'+str(n_local_enhancers)+'_2')   
             input_i = input_downsampled[self.n_local_enhancers-n_local_enhancers]            
             output_prev = model_upsample(model_downsample(input_i) + output_prev)
         return output_prev
@@ -207,8 +207,8 @@ class GlobalGenerator(nn.Module):
         model += [nn.ReflectionPad2d(3), nn.Conv2d(ngf, output_nc, kernel_size=7, padding=0), nn.Tanh()]        
         self.model = nn.Sequential(*model)
             
-    def forward(self, input):
-        return self.model(input)             
+    def forward(self, _input):
+        return self.model(_input)             
         
 # Define a resnet block
 class ResnetBlock(nn.Module):
@@ -274,8 +274,8 @@ class Encoder(nn.Module):
         model += [nn.ReflectionPad2d(3), nn.Conv2d(ngf, output_nc, kernel_size=7, padding=0), nn.Tanh()]
         self.model = nn.Sequential(*model) 
 
-    def forward(self, input, inst):
-        outputs = self.model(input)
+    def forward(self, _input, inst):
+        outputs = self.model(_input)
 
         # instance-wise average pooling
         outputs_mean = outputs.clone()
@@ -307,19 +307,19 @@ class MultiscaleDiscriminator(nn.Module):
 
         self.downsample = nn.AvgPool2d(3, stride=2, padding=[1, 1], count_include_pad=False)
 
-    def singleD_forward(self, model, input):
+    def singleD_forward(self, model, _input):
         if self.getIntermFeat:
-            result = [input]
+            result = [_input]
             for i in range(len(model)):
                 result.append(model[i](result[-1]))
             return result[1:]
         else:
-            return [model(input)]
+            return [model(_input)]
 
-    def forward(self, input):        
+    def forward(self, _input):        
         num_D = self.num_D
         result = []
-        input_downsampled = input
+        input_downsampled = _input
         for i in range(num_D):
             if self.getIntermFeat:
                 model = [getattr(self, 'scale'+str(num_D-1-i)+'_layer'+str(j)) for j in range(self.n_layers+2)]
@@ -372,15 +372,15 @@ class NLayerDiscriminator(nn.Module):
                 sequence_stream += sequence[n]
             self.model = nn.Sequential(*sequence_stream)
 
-    def forward(self, input):
+    def forward(self, _input):
         if self.getIntermFeat:
-            res = [input]
+            res = [_input]
             for n in range(self.n_layers+2):
                 model = getattr(self, 'model'+str(n))
                 res.append(model(res[-1]))
             return res[1:]
         else:
-            return self.model(input)        
+            return self.model(_input)        
 
 from torchvision import models
 class Vgg19(torch.nn.Module):

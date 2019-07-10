@@ -20,8 +20,8 @@ class UIModel(BaseModel):
         netG_input_nc = opt.label_nc
         if not opt.no_instance:
             netG_input_nc += 1            
-        if self.use_features:   
-            netG_input_nc += opt.feat_num           
+        if self.use_features:
+            netG_input_nc += opt.feat_num
 
         self.netG = networks.define_G(netG_input_nc, opt.output_nc, opt.ngf, opt.netG, 
                                       opt.n_downsample_global, opt.n_blocks_global, opt.n_local_enhancers, 
@@ -166,7 +166,7 @@ class UIModel(BaseModel):
             if save:
                 self.backup_current_state()
 
-            # update the label map (and the network input) in the stroke region            
+            # update the label map (and the network input) in the stroke region
             self.label_map[idx_src[:,0], idx_src[:,1], idx_src[:,2], idx_src[:,3]] = label_tgt
             for k in range(self.opt.label_nc):
                 self.net_input[idx_src[:,0], idx_src[:,1] + k, idx_src[:,2], idx_src[:,3]] = 0

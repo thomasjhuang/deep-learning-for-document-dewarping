@@ -100,12 +100,12 @@ class Pix2PixHDModel(BaseModel):
                 print('The layers that are finetuned are ', sorted(finetune_list))                         
             else:
                 params = list(self.netG.parameters())
-            if self.gen_features:              
+            if self.gen_features: 
                 params += list(self.netE.parameters())         
             self.optimizer_G = torch.optim.Adam(params, lr=opt.lr, betas=(opt.beta1, 0.999))                            
 
             # optimizer D                        
-            params = list(self.netD.parameters())    
+            params = list(self.netD.parameters())
             self.optimizer_D = torch.optim.Adam(params, lr=opt.lr, betas=(opt.beta1, 0.999))
 
     def encode_input(self, label_map, inst_map=None, real_image=None, feat_map=None, infer=False):             
@@ -151,7 +151,7 @@ class Pix2PixHDModel(BaseModel):
 
     def forward(self, label, inst, image, feat, infer=False):
         # Encode Inputs
-        input_label, inst_map, real_image, feat_map = self.encode_input(label, inst, image, feat)  
+        input_label, inst_map, real_image, feat_map = self.encode_input(label, inst, image, feat)
 
         # Fake Generation
         if self.use_features:
@@ -216,9 +216,9 @@ class Pix2PixHDModel(BaseModel):
             fake_image = self.netG.forward(input_concat)
         return fake_image
 
-    def sample_features(self, inst): 
+    def sample_features(self, inst):
         # read precomputed feature clusters 
-        cluster_path = os.path.join(self.opt.checkpoints_dir, self.opt.name, self.opt.cluster_path)        
+        cluster_path = os.path.join(self.opt.checkpoints_dir, self.opt.name, self.opt.cluster_path)
         features_clustered = np.load(cluster_path, encoding='latin1').item()
 
         # randomly sample from the feature clusters

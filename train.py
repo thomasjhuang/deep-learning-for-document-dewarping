@@ -102,7 +102,6 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
             t = (time.time() - iter_start_time) / opt.print_freq
             visualizer.print_current_errors(epoch, epoch_iter, errors, t)
             visualizer.plot_current_errors(errors, total_steps)
-            #call(["nvidia-smi", "--format=csv", "--query-gpu=memory.used,memory.free"]) 
 
         ### display output images
         if save_fake:
