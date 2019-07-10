@@ -112,7 +112,7 @@ def time_inference(engine, batch_size, inp):
     context = engine.create_execution_context()
     g_prof = Profiler(500)
     context.set_profiler(g_prof)
-    for i in range(iter):
+    for _ in range(iter):
         context.execute(batch_size, bindings)
     g_prof.print_layer_times()
 
