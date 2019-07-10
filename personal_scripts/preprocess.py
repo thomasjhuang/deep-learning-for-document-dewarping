@@ -167,7 +167,7 @@ def rotate_image(mat, angle):
 
     rotation_mat = cv2.getRotationMatrix2D(image_center, angle, 1.)
 
-    abs_cos = abs(rotation_mat[0,0]) 
+    abs_cos = abs(rotation_mat[0,0])
     abs_sin = abs(rotation_mat[0,1])
 
     bound_w = int(height * abs_sin + width * abs_cos)
@@ -208,7 +208,7 @@ def imgaug(args):
     for batch in augseq.augment_batches(batches, background=False):
         count = 0
         for img in batch.images_aug:
-            path = os.path.join(fold_A,root.rsplit('/', 1)[-1], os.path.splitext(filename)[0] + '_' + str(count) + '.jpg') 
+            path = os.path.join(fold_A,root.rsplit('/', 1)[-1], os.path.splitext(filename)[0] + '_' + str(count) + '.jpg')
             cv2.imwrite(path, img)
             print('image saved as: ' + path)
             count +=1
@@ -246,7 +246,7 @@ def main():
     parser.add_argument('--preprocess', dest='preprocess', help='complete preprocessing', type=bool, default=False)
     parser.add_argument('--removepng', dest='removepng', help='removes pngs', type=bool, default=False)
     parser.add_argument('--png2jpg', dest='png2jpg', help='convert folder of choice to jpg', type=str, default="")
-    
+
 
     args = parser.parse_args()
     warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -269,7 +269,7 @@ def main():
         train_B_dir = os.path.join(args.dest_dir,'train_B'))
         test_A_dir = os.path.join(args.dest_dir,'test_A'))
         test_B_dir = os.path.join(args.dest_dir,'test_B'))
-        
+
         os.mkdir(train_A_dir)
         os.mkdir(train_B_dir)
         os.mkdir(test_A_dir)
@@ -297,14 +297,14 @@ def main():
                 executor.map(imgaug, conv_list)
         executor.shutdown(wait=True)
         print('Augmentation took {:.3f} seconds'.format((time.clock() - start)*1000.0))
-    
+
     if(args.png2jpg != ""):
         print("Converting all pngs to jpgs")
         with concurrent.futures.ProcessPoolExecutor() as executor:
             for root, dirs, files in os.walk(args.png2jpg):
                 conv_list = (os.path.join(root,file) for file in files)
                 executor.map(png2jpg, conv_list)
-        executor.shutdown(wait=True) 
+        executor.shutdown(wait=True)
         print("Conversion to jpgs done")
 
     if(args.resize == True):
@@ -315,10 +315,10 @@ def main():
             for filename in os.listdir(args.resize_fold):
                 if filename.endswith(".jpg"):
                     process_list.append(args.resize_fold + filename)
-            executor.map(resize_and_rotate, process_list) 
+            executor.map(resize_and_rotate, process_list)
         executor.shutdown(wait=True)
         print('Rotations took {:.3f} seconds'.format((time.clock() - start)*1000.0))
-    
+
     if(args.removepng == True):
         #3. Removal of pngs
         print("Removing png's")
@@ -331,6 +331,6 @@ def main():
                 if file.endswith('.png'):
                     os.remove(os.path.join(root,file))
         print("Png's removed")
-   
+
 if __name__ == "__main__":
     main()

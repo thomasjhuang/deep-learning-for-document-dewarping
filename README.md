@@ -2,7 +2,7 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/7acd5aa8048a4c96bd97a96bac2639d1)](https://app.codacy.com/app/huang836/deep-learning-for-document-dewarping?utm_source=github.com&utm_medium=referral&utm_content=thomasjhuang/deep-learning-for-document-dewarping&utm_campaign=Badge_Grade_Dashboard)
 ![Python version](https://img.shields.io/pypi/pyversions/dominate.svg?style=flat)
 
-This project is focused on dewarping document images through the usage of pix2pixHD. The objective is to take images of documents that are warped, folded, crumpled, etc. and convert the image to  use the [official pix2pixHD repository](https://github.com/NVIDIA/pix2pixHD) to train and perform inference. 
+This project is focused on dewarping document images through the usage of pix2pixHD. The objective is to take images of documents that are warped, folded, crumpled, etc. and convert the image to  use the [official pix2pixHD repository](https://github.com/NVIDIA/pix2pixHD) to train and perform inference.
 
 ## Prerequisites
 
@@ -59,7 +59,7 @@ More example scripts can be found in the `scripts` directory.
 ### Dataset
 -   I use the kaggle denoising dirty documents dataset. To train a model on the full dataset, please download it from the [official website](https://www.kaggle.com/c/denoising-dirty-documents/data).
 After downloading, please put it under the `datasets` folder with warped images under the directory name `train_A` and unwarped images under the directory `train_B`. Your test images are warped images, and should be under the name `test_A`. Below is an example dataset directory structure.
-      
+
       .
       ├── ...
       ├── datasets                  
