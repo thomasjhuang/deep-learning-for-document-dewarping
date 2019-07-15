@@ -2,7 +2,7 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/7acd5aa8048a4c96bd97a96bac2639d1)](https://app.codacy.com/app/huang836/deep-learning-for-document-dewarping?utm_source=github.com&utm_medium=referral&utm_content=thomasjhuang/deep-learning-for-document-dewarping&utm_campaign=Badge_Grade_Dashboard)
 ![Python version](https://img.shields.io/pypi/pyversions/dominate.svg?style=flat)
 
-This project is focused on dewarping document images through the usage of pix2pixHD. The objective is to take images of documents that are warped, folded, crumpled, etc. and convert the image to  use the [official pix2pixHD repository](https://github.com/NVIDIA/pix2pixHD) to train and perform inference.
+This project is focused on dewarping document images through the usage of pix2pixHD. The objective is to take images of documents that are warped, folded, crumpled, etc. and convert the image to a "dewarped" state by using [pix2pixHD](https://github.com/NVIDIA/pix2pixHD) to train and perform inference. All of the model code is borrowed directly from the pix2pixHD official repository.
 
 ## Prerequisites
 
@@ -29,9 +29,8 @@ cd deep-learning-for-document-dewarping
 ```
 
 ### Training
--   Train the kaggle model with 256x256 crops (`bash ./scripts/train_kaggle_256.sh`):
+-   Train the kaggle model with 256x256 crops:
 ```bash
-#!./scripts/train_kaggle_256.sh
 python train.py --name kaggle --label_nc 0 --no_instance --no_flip --netG local --ngf 32 --fineSize 256
 ```
 -   To view training results, please checkout intermediate results in `./checkpoints/kaggle/web/index.html`.
@@ -44,16 +43,11 @@ If you have tensorflow installed, you can see tensorboard logs in `./checkpoints
 -   The default setting for preprocessing is `scale_width`, which will scale the width of all training images to `opt.loadSize` (1024) while keeping the aspect ratio. If you want a different setting, please change it by using the `--resize_or_crop` option. For example, `scale_width_and_crop` first resizes the image to have width `opt.loadSize` and then does random cropping of size `(opt.fineSize, opt.fineSize)`. `crop` skips the resizing step and only performs random cropping. If you don't want any preprocessing, please specify `none`, which will do nothing other than making sure the image is divisible by 32.
 
 ### Testing
--   A few example warped test images are included in the `datasets` folder.
--   Please download the pre-trained kaggle model from [here](https://drive.google.com/file/d/1h9SykUnuZul7J3Nbms2QGH1wa85nbN2-/view?usp=sharing) (google drive link), and put it under `./checkpoints/kaggle_256/`
--   Test the model (`bash ./scripts/test_kaggle_256.sh`):
+-   Test the model:
 ```bash
-#!./scripts/test_kaggle_256.sh
 python test.py --name kaggle --label_nc 0 --netG local --ngf 32 --resize_or_crop crop --no_instance --no_flip --fineSize 256
 ```
-The test results will be saved to a html file here: `./results/kaggle/test_latest/index.html`.
-
-More example scripts can be found in the `scripts` directory.
+The test results will be saved to a directory here: `./results/kaggle/test_latest/`.
 
 
 ### Dataset
