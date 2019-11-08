@@ -4,6 +4,10 @@
 
 This project is focused on dewarping document images through the usage of pix2pixHD. The objective is to take images of documents that are warped, folded, crumpled, etc. and convert the image to a "dewarped" state by using [pix2pixHD](https://github.com/NVIDIA/pix2pixHD) to train and perform inference. All of the model code is borrowed directly from the pix2pixHD official repository.
 
+Some of the intuition behind doing this is inspired by these two papers:
+1. [DocUNet: Document Image Unwarping via A Stacked U-Net (Ma et.al)](https://www.juew.org/publication/DocUNet.pdf)
+2. [Document Image Dewarping using Deep Learning (Ramanna et.al)](www.insticc.org/Primoris/Resources/PaperPdf.ashx?idPaper=73684)
+
 ## Prerequisites
 
 This project requires **Python** and the following Python libraries installed:
