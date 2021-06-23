@@ -8,9 +8,6 @@ Some of the intuition behind doing this is inspired by these two papers:
 1. [DocUNet: Document Image Unwarping via A Stacked U-Net (Ma et.al)](https://www.juew.org/publication/DocUNet.pdf)
 2. [Document Image Dewarping using Deep Learning (Ramanna et.al)](www.insticc.org/Primoris/Resources/PaperPdf.ashx?idPaper=73684)
 
-## May 8, 2020 : Important Update
-- This project does not contain a pre-trained model. I currently do not have the resources to train a model on an open source dataset, nor do I have the bandwidth at the moment to do so. If anyone would like to contribute a pretrained model and share their model checkpoints, feel free to do so, I will likely accept any PR trying to do this. Thanks!
-
 ## Prerequisites
 
 This project requires **Python** and the following Python libraries installed:
