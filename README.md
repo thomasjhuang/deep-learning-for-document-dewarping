@@ -1,5 +1,5 @@
 # Docuwarp
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/7acd5aa8048a4c96bd97a96bac2639d1)](https://app.codacy.com/app/huang836/deep-learning-for-document-dewarping?utm_source=github.com&utm_medium=referral&utm_content=thomasjhuang/deep-learning-for-document-dewarping&utm_campaign=Badge_Grade_Dashboard)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/e8bf67a83de04872aecd3c09f11b6389)](https://www.codacy.com/gh/thomasjhuang/deep-learning-for-document-dewarping/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=thomasjhuang/deep-learning-for-document-dewarping&amp;utm_campaign=Badge_Grade)
 ![Python version](https://img.shields.io/pypi/pyversions/dominate.svg?style=flat)
 
 This project is focused on dewarping document images through the usage of pix2pixHD, a GAN that is useful for general image to image translation. The objective is to take images of documents that are warped, folded, crumpled, etc. and convert the image to a "dewarped" state by using [pix2pixHD](https://github.com/NVIDIA/pix2pixHD) to train and perform inference. All of the model code is borrowed directly from the pix2pixHD official repository.
